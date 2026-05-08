@@ -1,0 +1,795 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Surprise For You!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            overflow-x: hidden;
+            color: #333;
+        }
+        .title-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .compliment-box {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.5s ease-in-out;
+        }
+        .floating-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff4757;
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 10s infinite ease-in-out;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+        #love-note {
+            position: absolute;
+            top: 85vh;
+            left: 80vw;
+            background-color: #ff4757;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            user-select: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: top 0.5s ease-in-out, left 0.5s ease-in-out, transform 0.2s ease;
+        }
+        #love-note:active {
+            transform: scale(0.95);
+        }
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff4757;
+            pointer-events: none;
+            z-index: 999;
+            animation: burst 0.8s ease-out forwards;
+            clip-path: polygon(50% 100%, 0 45%, 20% 0, 80% 0, 100% 45%);
+        }
+        @keyframes burst {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+        }
+
+        /* --- Digital Memory Lane (Timeline) Styles --- */
+        .timeline-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: rgba(255, 255, 255, 0.7);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 6px;
+            z-index: -1;
+        }
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            right: -12px;
+            background-color: white;
+            border: 4px solid #ff9a9e;
+            top: 32px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .timeline-left { left: 0; }
+        .timeline-right { left: 50%; }
+        .timeline-right::after { left: -12px; }
+        
+        /* --- Walking Couple Animation --- */
+        .walking-animation-container {
+            width: 100%;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: -20px;
+        }
+        .walking-couple {
+            display: flex;
+            align-items: flex-end;
+            position: absolute;
+            bottom: 10px;
+            animation: endless-walk 25s linear infinite;
+        }
+        .person {
+            position: relative;
+            width: 60px;
+            height: 90px;
+        }
+        .person-head {
+            width: 35px;
+            height: 35px;
+            background-color: #f2d5b6; /* Skin tone */
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 12.5px;
+            z-index: 2;
+        }
+        .person-body {
+            position: absolute;
+            bottom: 25px;
+            left: 10px;
+            width: 40px;
+            height: 40px;
+        }
+        .girl {
+            z-index: 3;
+            transform: translateX(15px);
+        }
+        .girl .person-head::after { /* Hair */
+            content: '';
+            position: absolute;
+            background-color: #3D3535;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            top: -2px;
+            left: -2px;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 75% 80%, 70% 60%, 65% 90%, 50% 60%, 35% 90%, 30% 60%, 25% 80%, 0% 70%);
+        }
+        .girl .person-body {
+            background-color: #d9534f; /* Red sweater */
+            border-radius: 10px;
+        }
+        .girl .arm {
+            width: 15px;
+            height: 10px;
+            background: #d9534f;
+            position: absolute;
+            left: -5px;
+            top: 10px;
+            border-radius: 5px;
+            z-index: -1;
+        }
+        .boy { z-index: 2; }
+        .boy .person-head::after { /* Hair */
+            content: '';
+            position: absolute;
+            background-color: #3D3535;
+            width: 35px;
+            height: 25px;
+            border-radius: 50% 50% 0 0;
+            top: 0;
+            left: 0;
+        }
+        .boy .person-body {
+            background-color: #f7f3e3; /* Cream sweater */
+            border-radius: 10px;
+        }
+        .legs {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30px;
+        }
+        .leg {
+            width: 12px;
+            height: 28px;
+            position: absolute;
+            bottom: 0;
+            left: 24px;
+            transform-origin: top center;
+            border-radius: 6px;
+        }
+        .girl .leg { background-color: #f7f3e3; }
+        .boy .leg { background-color: #5a6a72; }
+        .leg-front { animation: walk-front 1.5s linear infinite; }
+        .leg-back { animation: walk-back 1.5s linear infinite; z-index: -1; }
+
+
+        @keyframes endless-walk {
+            0% { transform: translateX(-150px); }
+            100% { transform: translateX(100vw); }
+        }
+        @keyframes walk-front {
+            0% { transform: rotate(-25deg); }
+            50% { transform: rotate(25deg); }
+            100% { transform: rotate(-25deg); }
+        }
+        @keyframes walk-back {
+            0% { transform: rotate(25deg); }
+            50% { transform: rotate(-25deg); }
+            100% { transform: rotate(25deg); }
+        }
+
+        @media screen and (max-width: 768px) {
+            .timeline-container::after { left: 31px; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .timeline-right { left: 0%; }
+            .timeline-left::after, .timeline-right::after { left: 19px; }
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <div id="love-note">Supercalifragilisticexpialidocious🤍</div>
+    <div id="particle-container" class="absolute top-0 left-0 w-full h-full pointer-events-none"></div>
+
+    <div class="container mx-auto p-4 sm:p-8">
+        <header class="my-8 sm:my-16">
+             <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10">
+                 <div class="flex-shrink-0">
+                     <img src="profile.jpg" 
+                          onerror="this.onerror=null;this.src='saree.jpg';"
+                          alt="A beautiful picture of ab" 
+                          class="w-48 h-48 md:w-64 md:h-64 rounded-full object-cover border-4 border-white shadow-2xl">
+                 </div>
+                 <div class="text-center md:text-left">
+                      <h1 class="title-font text-4xl sm:text-6xl font-bold text-white drop-shadow-lg">“Happy Birthday, AB∞”</h1>
+                      <p class="text-lg sm:text-xl mt-2 text-white/90">The one who stole my heart.</p>
+                      <div class="mt-4 p-4 bg-white/20 rounded-xl max-w-md backdrop-filter backdrop-blur-sm">
+                           <p class="text-white/90 italic">
+                               "Happy Birthday To A Sweet Soul,
+You Deserve Every Good Things That
+Comes Your Way, Have A Blast..!!
+​Happiest Birthday 🤍"
+                           </p>
+                      </div>
+                 </div>
+             </div>
+        </header>
+
+        <main>
+            <div class="walking-animation-container">
+                <div class="walking-couple">
+                    <div class="person boy">
+                        <div class="person-head"></div>
+                        <div class="person-body"></div>
+                        <div class="legs">
+                            <div class="leg leg-front"></div>
+                            <div class="leg leg-back"></div>
+                        </div>
+                    </div>
+                    <div class="person girl">
+                        <div class="person-head"></div>
+                        <div class="person-body"></div>
+                        <div class="arm"></div>
+                        <div class="legs">
+                            <div class="leg leg-front"></div>
+                            <div class="leg leg-back"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="compliment-container" class="compliment-box text-center p-6 sm:p-8 rounded-2xl shadow-xl max-w-2xl mx-auto mb-12">
+                <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-4">A Quick Compliment...</h2>
+                <p id="compliment-text" class="text-xl sm:text-2xl text-pink-600 h-16 flex items-center justify-center"></p>
+            </div>
+
+            <div class="max-w-4xl mx-auto mb-12">
+                <h2 class="title-font text-3xl sm:text-4xl font-bold text-white drop-shadow-lg text-center mb-6">Soundtrack For You</h2>
+                <div class="card shadow-lg overflow-hidden p-2">
+                     <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/1Qu2gvVEA2K0BsDhnG4wEn" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto mb-12">
+                <h2 class="title-font text-3xl sm:text-4xl font-bold text-white drop-shadow-lg text-center mb-6">Our Little Movie</h2>
+                <div class="card shadow-lg overflow-hidden p-2">
+                   <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe 
+    src="https://www.youtube.com/embed/6uqZ6VQr_HE"
+    style="position: absolute; top:0; left:0; width:100%; height:100%;"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto mb-12 text-center">
+                 <h2 class="title-font text-3xl sm:text-4xl font-bold text-white drop-shadow-lg text-center mb-6">Our Cherishred Moment</h2>
+            </div>
+            <div class="timeline-container">
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="library.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFC0CB/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Our study days</h3>
+                            <p class="text-gray-600">पता है… 
+आपकी खूबसूरती सिर्फ आपके चेहरे में नहीं है।
+वो उस focus में भी दिखती है, जब आप library में बैठकर The Hindu के pages पलटती हो, DI के questions solve करती हो, और पूरी seriousness के साथ अपने goals पर काम करती हो।
+सच कहूं, उस समय आप सिर्फ classy नहीं… inspiring लगती हो।.......आपका लाइब्रेरी में आना और आपके एक्शन से मुझे हमेशा पॉजिटिव एनर्जी फील हुई है।
+पता है जब आप पांडेयपुर शिफ्ट हो रहे थे उसके पहले हम कॉफी के लिए सुरभि में फर्स्ट टाइम मिले थे तब मेरा प्लान था आपसे कॉन्टेक्ट नंबर मागूंगा, bt आप उस समय अलग ही प्रॉब्लम फेस कर रहे थे इसलिए मेरा चुप रहना मुझे बेहतर लगा.......
+फिर मै एग्जाम देने घर चला गया था वहां से लौटा तो देखा आपके सामान लॉकर में पड़े हुए है फिर एक उम्मीद थी कि सामान लेने आओगे तो पक्का कॉन्टेक्ट नंबर मागूंगा....bt जब आप लॉकर से समान लेने आए तो भी मै नहीं था।
+आयुष बता रहा था आपके पैर में चोट लगी थी सुनकर बहुत दुःख हुआ था.....
+
+bt उसके बाद भी आप दो किताब छोड़ गए थे, आपके लिए वो दो किताब थे bt मेरे लिए मिलने की फिर से उम्मीद.......लेकिन जब आप लौटी तो मेरा पूरा फोकस पढ़ाई पर था इसलिए आपको इग्नोर कर दिया और और आप किताब लेकर बाहर चले गए then जब आप वापस से लाइब्रेरी में आए और मेरे से बात की और बोली इगनोर कर रहे हो तो सच में मुझे गिल्ट फील हुआ....
+
+फिर टेलीग्राम id मांगी वहां आपका कॉन्फिडेंस मुझे बहुत पसंद आया था.....
+       बहुत कम लोग इतने naturally confident, genuine और graceful होते हैं।
+शायद इसलिए आपकी presence हमेशा याद रह जाती है…
+क्योंकि आप सिर्फ दिखती खूबसूरत नहीं हो,
+feel भी खूबसूरत होती हो। ❤️</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="cow.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/D8BFD8/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Caring nature</h3>
+                            <p class="text-gray-600">पता है........
+जब वो छोटा calf बार-बार आवाज़ कर रहा था, तब honestly मुझे समझ नहीं आ रहा था कि क्या हुआ है।
+फिर बाहर आकर देखा — आप उसके पास बैठकर उसे इतने प्यार और patience से handle कर रही थीं, जैसे वो भी आपकी बात समझ रहा हो।
+आपने बस इतना कहा —
+‘शायद इसे भूख लगी है…’
+और फिर हम दोनों का दुकान से bread लाना और उसे खिलाना…
+पता नहीं क्यों, लेकिन वो scene मेरे दिल में हमेशा के लिए freeze हो गया।
+सबसे प्यारी बात ये थी कि आपकी kindness किसी show-off जैसी नहीं थी…
+वो बिल्कुल natural थी।
+ऐसा लगा जैसे caring होना आपकी personality का हिस्सा है, effort नहीं।
+और honestly… irony तो देखो 😄
+हम उसे bread खिला रहे थे,
+और वो उल्टा हमें ही हल्के-हल्के hit कर रहा था 😂
+लेकिन शायद emotions भी कुछ ऐसे ही होते हैं…
+कभी इंसान, कभी जानवर —
+दोनों ही pain को words में नहीं, behavior में express करते हैं।
+उस दिन मैंने सिर्फ एक caring gesture नहीं देखा था…
+मैंने एक बहुत beautiful soul देखी थी ❤️” </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="dog.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFB6C1/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Purest form of love  </h3>
+                            <p class="text-gray-600">Purest form of love🤍
+जब मै बची हुई लस्सी फेंकने वाला था तो आपने रोककर बोला कि इसको इस प्लेट में डाल देते है कोई puppy पी लेगा....
+इस छोटी सी एंसिडेंट ने मेरे दिल को छू लिया था।☺️ </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="sibreanbird.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/E6E6FA/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">Interview Timing </h3>
+                             <p class="text-gray-600">पता है जब आप पांडेयपुर में थे वहां से साइबेरियन देखने आए थे तब मैं आपको टेक्स्ट किया था तो आपने सीधा मेरा इन्टरव्यू लेना स्टार्ट कर दिया था....😂
+कैसे लाइब्रेरी में बैठ लेते हो इतना...?
+कहा से लाते हो इतना मोटिवेशन..?
+आंख दर्द नहीं करता क्या...?
+तब मै तुरंत समझ गया मैडम बिजी है खैर......
+बनारस घाट+साइबेरियन बर्ड 🕊️=AB Vibes</p>
+                         </div>
+                     </div>
+                </div>
+                 <div class="timeline-item timeline-left">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="bookread.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFDAB9/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">Secret Revel </h3>
+                             <p class="text-gray-600">पता है AB...
+ इसकी एक अलग कहानी है सुनो..
+जब आप लाइब्रेरी में आते थे तो एक दिन कुछ नया हुआ था आज रिवील कर रहा हूं.....हंसना मत plz 😂
+आप एक बुक पढ़ रही थी..मै आपको पढ़ते हुए देखा तो सोचा यह सब किताबें भी पढ़ती है ये....?
+फिर एक दिन पूरी लाइब्रेरी खाली थी और आपके सीट पर वो किताब पड़ी थी फिर मै चुपके से वो किताब लाकर देखने लगा उसका फोटो खींच लिया..... फिर सोचा उसको जल्दी से पढ़कर खत्म कर दूंगा जब आपसे बात होगी तो उस किताब के बारे में आपसे बात करके आपको इंप्रेस करूंगा😃😜
+
+सुनो हंसों mt plz....🤓😃
+ऐसा इसलिए किया था yar हम दोनों के बीच बात करने जैसा कुछ था ही नहीं क्या बात करता आपसे कहां से स्टार्ट करता सोचा ये किताब माध्यम बन सकता है।
+पता है वो बुक का नाम मुझे नहीं याद है और वो फोटो भी मेरे से डिलीट हो गई bt वो राइटर कोई यादव था......
+और सुनो मैडम ऐसी फिलिंग और एफर्ट्स दोस्ती में नहीं आती है🤓
+
+Hm एक बात और...
+
+तुम्हारा बुक्स के लिए इंटरेस्ट काफी क्लासी है, हर किसी में नहीं होता। यही चीज आपको प्रीसियस बनाती है।🤍</p>
+                         </div>
+                     </div>
+                </div>
+                 <div class="timeline-item timeline-right">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="agri.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/dda0dd/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">Health conscious </h3>
+                             <p class="text-gray-600"> Agriculture ground-
+आपने बोला वहां लेमनग्रास है लेकर चलते है चाय बनाकर पियेंगे😇 चलो husband आयुर्वेदिक doctor नहीं मिला तो उसको आयुर्वेदिक doctor खुद बना दोगे इतना हेल्थ कॉन्सियस जो हो😀😁
+आज के मैकडॉनलाइजेशन के युग में आपका ये हेल्थ कॉन्सिसियस आपको सबसे क्लासी और डिफरेंट बनाता है।
+
+आयुर्वेद डॉक्टर वाला कॉन्टैक्स्ट - 
+जब हम लोग मूवी देख आ रहे थे आप बोल रहे थे ये नहीं खाएंगे वो नहीं खायेंगे तब मैने बोला आयुर्वेद डॉक्टर से शादी करना और उससे रिलेटेड हँसी मजाक😄</p>
+                         </div>
+                     </div>
+                </div>
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="eye_test.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFC0CB/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Respected Maidam </h3>
+                            <p class="text-gray-600">पता है उस पल आपकी eye power नहीं,
+आपकी मेहनत और patience ने मुझे ज़्यादा impress किया, यही सोच रहा था कितना हार्ड वर्क करके आई होगी यहां तक....
+सच कहूँ तो… उस दिन आपके लिए respect थोड़ी और गहरी हो गई।” ✨</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="sunbeam.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/D8BFD8/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Deep Imagination </h3>
+                            <p class="text-gray-600">लोकेशन...
+सनबीम वाले रास्ते पर गली में जब आप फोटो क्लिक करने लगे थे....
+तो सुनो मैडम...
+शायद उस पेंटिंग के कलाकार ने भी नहीं सोचा होगा कि एक दिन उसकी कला को इतनी खूबसूरत मुस्कान का साथ मिलेगा।🙂</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="randonclick.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFB6C1/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Nature Lover</h3>
+                            <p class="text-gray-600">ये जो तुम फोन निकालकर नेचर को कैप्चर करती हो, कभी उस कैमरे की नज़र से खुद को भी देख लिया करो... पता चल जाएगा कि असली 'नेचर' की खूबसूरती कहाँ है! 😉
+
+वैसे एक बात बोलूं..?
+आपके नेचर को फील करने की इमैजिनेशन पावर ही आपको सबसे डिफरेंट बनाती है।🤍</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="travel.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/E6E6FA/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">Travel Enthusiast </h3>
+                             <p class="text-gray-600">आपको ट्रेवलिंग पसंद है और मुझे एक्सप्लोर करना। एक काम करते हैं... आप मुझे बनारस की गलियों में खोना सिखा दो, और मैं आपको स्कॉटलैंड(Edinburgh) के उन पहाड़ों पर ले चलूँगा जहाँ वक़्त ठहर जाता है। साथ में दुनिया नापने का आईडिया बुरा नहीं है, है न? 🙂"
+
+दिख रहा है कितना फोकस और स्माइल के साथ पढ़ रही हो......😌</p>
+                         </div>
+                     </div>
+                </div>
+                 <div class="timeline-item timeline-left">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="taj.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFDAB9/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">Supercalifragilisticexpialidocious🔥</h3>
+                             <p class="text-gray-600">
+
+    Wait Wait Wait.........
+ क्या कर रही हो AB मैडम👀 
+
+इतने ध्यान से मत देखो अपने आंखों का काला जादू मेरी तरह इस पर भी कर दोगे क्या....
+            एक तो मैडम को कितनी बार बोला हूं रात में मत निकला करो आपको देखकर लोग ईद की तारीख भूल जाते है।
+Bt नहीं आज मैडम पहुंच गई ताज में उसकी भी चमक फीकी कर दी.....
+            अरे मैडम ताज को ताज रहने दीजिए आपने वहां जाकर उसका ताज छीन लिया उसका गुरूर छिन लिया अब वह बेताज हो गया..........
+       सुना था मुंबई की रातें और ताज की रौनक लाजवाब होती है, पर आज यकीन हो गया कि असली चमक तो आपकी सादगी में है।
+खैर .....
+अगली बार साथ चलते हैं।
+
+अरे अरे....
+एक चीज और याद आ गया रुको............................................
+        "ये जो माथे पर बिंदी और दोनों गालों पर तिल लिए फिरती हो न उस पर दो लाइन....
+
+चेहरा जैसे चांद लिए फिरती हो, 
+     कदमों में आसमान लिए फिरती हो,
+मुझे मारने का इरादा कर लिया है क्या,
+      जुल्फों का जंजाल लिए फिरती हो,
+माथे पर लगाकर छोटी सी बिंदी,
+      आंखें भी कमाल लिए फिरती हो,
+वैसे भी नजरे तुमसे हटती नहीं है,
+    और तुम हो कि तिल वाला गाल लिए फिरती हो।।,".................
+ क्या सोच रही हो अब कंट्रोल करना पड़ेगा😂😄या फिर मुक्का मारने का मन कर रहा है😂
+ठीक समझ रहे है bt थोड़ा तो चलता है yr.. 😁
+नहीं तो हम आपके खूबसूरती के बारे में बताने लग जाए
+तो आपकी आंखों पर ही जमाने लग जाए।🤍</p>
+                         </div>
+                     </div>
+                </div>
+                 <div class="timeline-item timeline-right">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="sci-fi.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/dda0dd/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">Sci-Fi Imagination</h3>
+                             <p class="text-gray-600">"साइंस फिक्शन पसंद करना हर किसी के बस की बात नहीं, पर आपकी इमेजिनेशन तो 'Project Hail Mary' के किसी रोमांचक सफर जैसी है। जैसे रीलैंड ग्रेस ने तारों के बीच रास्ता ढूँढ लिया था, वैसे ही आपकी सादगी और सोच हर मुश्किल चीज़ को खूबसूरत बना देती है।"</p>
+                         </div>
+                     </div>
+                </div>
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="gutiar.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFC0CB/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Guitarist</h3>
+                            <p class="text-gray-600">They say music speaks where words fail. Your persistence with the guitar shows how much depth you have as a person. It’s not just a hobby; it’s a reflection of your personality. Proud of you! ❤️"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="sing.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/D8BFD8/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Nightangle </h3>
+                            <p class="text-gray-600">सच कहूँ तो मैंने तुम्हें गाते हुए कभी सुना नहीं है, लेकिन तुम्हारी वॉइस में जो नेचुरल सुकून है, वो बातों से ही महसूस होता है। तुमसे बात करना मेरे लिए किसी थेरेपी से कम नहीं है।
+जो प्लेलिस्ट तुमने भेजी, उसमें 'तुम नज़र में रहो' तो सीधा दिल को छू गया, पर 'हम नहीं तेरे दुश्मनों में' ने तो अलग ही वाइब सेट कर दी है! पता नहीं क्यों, पर आजकल मैं भी यही गुनगुना रहा हूँ... शायद तुम्हारी पसंद का असर है। मेहंदी हसन साहब तो लीजेंड हैं ही, उनकी चॉइस बताती है तुम्हारी पसंद कितनी क्लासी है।
+मैंने भी ऊपर कुछ अपने फेवरेट गाने ऐड किए हैं। 'हम नहीं रहेंगे' सुनना और हो सके तो मुझे याद कर लेना! 😄 </p>    
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="chef.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFB6C1/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Hello maidam Chef
+                            </h3>
+                            <p class="text-gray-600">तुम चिकन, अंडा करी और चने की सब्जी तो लाजवाब बनाती ही हो, पर अब तुम्हारे हाथ की मशरूम की सब्जी चखने की बड़ी हसरत है। 
+सच कहूँ तो आलू-गोभी में जब तुम वो खड़ा धनिया डालती होगी, तो उसका स्वाद सीधे घर की याद दिला देता होगा।
+ सुनके ही मुँह में पानी आ गया! बादल भी जब कुछ स्पेशल बनाता है तो वही खड़ा धनिया डालता है... वो जब दांतों के नीचे आता है ना, तो बस सुकूँ सा मिल जाता है। 
+और तुम्हारी चाय की वो लिस्ट—अदरक, इलायची ,दालचीनी,लौंग,सौंफ,काली मिर्च —बताती है कि तुम सिर्फ चाय लवर नहीं, चाय की पारखी हो!"
+
+वैसे एक बात कहूँ? मुझे आज भी याद है जब तुम calf के लिए ब्रेड लेने से पहले चाय पीने रुकी थीं... मैंने तुम्हें पहली बार तभी चाय पीते देखा था। जिस सादगी और अंदाज़ से तुम चाय पीती हो ना, बस देखते रह जाने का मन करता है। कोई इतनी खूबसूरती से चाय कैसे पी सकता है?"
+
+समझ नहीं आया न......तो सुनो..
+सादगी और अंदाज का मतलब चाय जब आप पीते हो तो सबसे पहले आप लिप्स पर कुछ टाइम तक रखते हो फिर वो गले के अंदर जाता है।😂😂😂😃</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="food_pack.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/E6E6FA/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2"> Your thoughtfullness touched my heart </picture></h3>
+                             <isme class="text-gray-600">“Krystal Kitchen की उस शाम में सबसे खूबसूरत चीज़ खाना, lights या ambience नहीं था…
+बल्कि आपकी वो छोटी-सी बात थी, जिसने दिल में बहुत गहरी जगह बना ली।
+
+जब डिनर खत्म हुआ और आपने इतने casually कहा —
+‘बचा हुआ food पैक करवा लेते हैं… किसी जरूरतमंद को दे देंगे, और अगर कोई न मिला तो बाद में खुद खा लेंगे।’
+
+उस पल समझ आया कि किसी इंसान की असली खूबसूरती उसकी choices में छिपी होती है।
+क्योंकि जहां लोग अक्सर extra food को बिना सोचे छोड़ देते हैं,
+वहीं आपने उसकी value भी समझी… और किसी अनजान इंसान का हिस्सा भी।
+
+पता नहीं क्यों, पर उस moment में आपकी respect अचानक और बढ़ गई थी।
+ऐसा लगा जैसे आपकी personality में softness भी है, sense भी… और वो rare kind of humanity भी, जो आजकल बहुत कम देखने को मिलती है।
+
+मैं usually emotions ज़्यादा express नहीं करता…
+पर उस दिन दिल ने quietly admit किया था —
+‘ये लड़की अलग है… बहुत अलग।’ ❤️”</p>
+                         </div>
+                     </div>
+                </div>
+                 <div class="timeline-item timeline-left">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="mojito.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFDAB9/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">Fav drink</h3>
+                             <p class="text-gray-600">सुनो पहले कॉन्टैक्स्ट समझो....
+मैंने आपका एक हेल्प किया था आपने बोला था then Mojito मेरी तरफ से...
+Bt अभी तक पिलाई नहीं मेरे को😒
+
+         वैसे ये जो आप इतनी मेहनत से पुदीना कूट रही हो, इसमें थोड़ी चीनी कम डालना... क्योंकि आपकी स्माइल पहले से ही काफी मिठास बढ़ा रही है! 😉 अब बताओ, कब पिला रही हो?"</p>
+                         </div>
+                     </div>
+                </div>
+                 <div class="timeline-item timeline-right">
+                     <div class="card shadow-lg overflow-hidden">
+                         <img src="sunset.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/dda0dd/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                         <div class="p-6">
+                             <h3 class="text-2xl font-semibold mb-2">AB Vibe</h3>
+                             <p class="text-gray-600">"Beach और Sunset का ये कॉम्बिनेशन वाकई सुकून देने वाला है, पर उस फ्रेम में आपकी मौजूदगी उसे 'Picture Perfect' बना रही है। अगली बार सनसेट देखते वक्त मुझे साथ रखिएगा... देखना है कि ढलता सूरज आपको देखकर जलता है या आपकी मुस्कान से और चमक जाता है। 🌅✨"
+
+सुना न इतनी जल्दी मुस्करा रही हो..
+
+
+              "भले ही ये बीच का सनसेट हो, पर इसमें वही सुकून है जो घाट की शाम में होता है। अगली बार साथ चलेंगे... ये तय करने कि दुनिया का सबसे खूबसूरत सनसेट कहाँ होता है, आपकी आँखों में या इस समंदर के किनारे। ❤️"</p>
+                         </div>
+                     </div>
+                </div>
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="hidden.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFC0CB/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">बनारस की वास्कोडिगामा😁</h3>
+                            <p class="text-gray-600">हिडेन प्लेस तब तक हिडेन है जब तक वहां AB मैडम न पहुंची हो😂</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="hobby.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/D8BFD8/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Purest form of love🤍
+जब मै बची हुई लस्सी फेंकने वाला था तो आपने रोककर बोला कि इसको इस प्लेट में डाल देते है कोई puppy पी लेगा....
+इस छोटी सी एंसिडेंट ने मेरे दिल को छू लिया था।☺️</h3>
+                            <p class="text-gray-600">Inspiring AB
+सुनो मैडम लाइफ में स्ट्रेस मत लिया करो कि ये जो करना है लाइफ में वो नहीं कर पा रहे हैं ये नहीं हो रहा है वो नहीं हो रहा है....
+सेल्फ बीलिब रखो सब कर लोगे आपके अंदर वो पोटेंशियल है।
+           लाइफ में उतार-चढ़ाव तो आते रहेंगे, पर आपकी ये 'Multi-tasking' वाली पावर ही आपकी असली स्ट्रेंथ है।</p>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="timeline-item timeline-left">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="bankpo.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FFC0CB/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Success comes to you  </h3>
+                            <p class="text-gray-600">पिछले बार लाइब्रेरी में आप जिस कंसिस्टेंसी के साथ पढ़ते थे वैसे लग जाइए 6 मंथ बस फिर देखिए आपके पास वो सब कुछ होगा जिसके आप हकदार हो......
+       आपके हार्डवर्क और कंसिस्टेंसी पर             मुझे पूरा भरोसा है।
+बनारस की गलियों से सपनो का यह सफर जल्द पूरा होगा💖💫
+उस दिन का इंतज़ार है जब हम दोनों अपनी कामयाबी साथ में सेलिब्रेट करेंगे। 🚀💫</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item timeline-right">
+                    <div class="card shadow-lg overflow-hidden">
+                        <img src="mba.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/D8BFD8/FFFFFF?text=Image+Error';" alt="A lovely memory" class="w-full">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-semibold mb-2">Dream College</h3>
+                            <p class="text-gray-600">Aapki ye 'never settle' wali approach hi mujhe sabse zyada pasand hai. Banking toh tum nikal hi logi, par IIM tumhare liye ek naya aasmaan khol dega.💫</p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-16 pb-8">
+            <p class="text-lavender-300 text-lg italic">
+ कहना नहीं था... पर कह दिया"<br>
+<br>
+​तुम अच्छी लगती हो...<br>
+नहीं, मेरा वो मतलब नहीं था,<br>
+बस... तुम अच्छी लगती हो।<br>
+<br>
+​मतलब... ऐसा कुछ खास भी नहीं,<br>
+पर जब तुम सामने होती हो ना,<br>
+तो बाकी सब थोड़ा कम लगता है।<br>
+<br>
+​मैं ये नहीं कह रहा कि<br>
+तुम जरूरी हो...<br>
+पर अजीब है,<br>
+तुम ना हो तो सब अधूरा सा लगता है।<br>
+<br>
+​मैंने कभी तुम्हें उस नज़र से देखा भी नहीं...<br>
+या शायद देखा है,<br>
+पर खुद से मान नहीं पाया।<br>
+<br>
+​तुम हँसती हो तो अच्छा लगता है,<br>
+पर ये भी कोई वजह हुई क्या...?<br>
+किसी के हँसने से कोई इतना अच्छा लगने लगे...<br>
+<br>
+​अरे नहीं, मैं कुछ सोच नहीं रहा,<br>
+तुम गलत समझ रही हो...<br>
+मैं तो बस यूँ ही कह रहा था—<br>
+​कि...<br>
+<br>
+<br>
+​तुम अच्छी लगती हो।<br>
+​और शायद...<br>
+<br>
+इस बार मेरा सच में वही मतलब था。 ❤️<br>
+<br>
+<br>
+
+All beautifuel things in your life are start with 'S' like Sun(sunset & sunrise), Stars, Smile, Soul, Sincerity, Silence, Strength, Success And San(me)💞
+</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Compliment Updater ---
+            const compliments = [
+                
+                "you feel like sunlight",
+                "pretty eyes, prettier soul",
+                "agar tu titanic hoti to woh kabhi nhi dubta kyuki iceberg bhi tumko dekh kr pighal jata",
+                "check honi chaiiye tumhari bhi nagrikta, tumko dekh kr lgta hai ki chand se aayi ho tum. ",
+                "Being around you feels like comfort in its prettiest form.",
+                "You light up my world like nobody else. Your smile is my sunshine.",
+                "I feel like my whole life was just black and white until I met you, and you brought all the color. 🎨",
+                "You must be made of copper and tellurium, because you're Cu-Te.",
+                "I must be a snowflake, because I've fallen for you.",
+
+            ];
+
+            const complimentText = document.getElementById('compliment-text');
+            const complimentContainer = document.getElementById('compliment-container');
+            let currentIndex = 0;
+            function updateCompliment() {
+                complimentContainer.style.opacity = '0';
+                complimentContainer.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    currentIndex = (currentIndex + 1) % compliments.length;
+                    complimentText.textContent = compliments[currentIndex];
+                    complimentContainer.style.opacity = '1';
+                    complimentContainer.style.transform = 'scale(1)';
+                }, 500);
+            }
+            complimentText.textContent = compliments[0];
+            // Update every 7 seconds
+            setInterval(updateCompliment, 7000);
+
+            const floatingParticleContainer = document.getElementById('particle-container');
+            const floatingParticleCount = 30;
+            for (let i = 0; i < floatingParticleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('floating-particle');
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.animationDuration = `${5 + Math.random() * 5}s`;
+                particle.style.transform = `scale(${Math.random()})`;
+                particle.style.background = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.2})`;
+                particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+                floatingParticleContainer.appendChild(particle);
+            }
+
+            const loveNote = document.getElementById('love-note');
+            loveNote.addEventListener('click', function(e) {
+                createParticleBurst(e.clientX, e.clientY);
+                moveLoveNote();
+            });
+            function createParticleBurst(x, y) {
+                const particleCount = 20;
+                const colors = ['#ff4757', '#ff7f50', '#ff6b81', '#ffffff'];
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    const randomX = (Math.random() - 0.5) * 200;
+                    const randomY = (Math.random() - 0.5) * 200;
+                    particle.style.setProperty('--x', `${randomX}px`);
+                    particle.style.setProperty('--y', `${randomY}px`);
+                    document.body.appendChild(particle);
+                    setTimeout(() => { particle.remove(); }, 800);
+                }
+            }
+            function moveLoveNote() {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const noteWidth = loveNote.offsetWidth;
+                const noteHeight = loveNote.offsetHeight;
+                const newTop = Math.random() * (vh - noteHeight - 40) + 20;
+                const newLeft = Math.random() * (vw - noteWidth - 40) + 20;
+                loveNote.style.top = `${newTop}px`;
+                loveNote.style.left = `${newLeft}px`;
+            }
+        });
+    </script>
+</body>
+</html>
