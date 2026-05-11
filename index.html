@@ -757,12 +757,15 @@ All beautifuel things in your life are start with 'S' like Sun(sunset & sunrise)
                 floatingParticleContainer.appendChild(particle);
             }
 
-            loveNote.addEventListener('click', function(e) {
-    loveNoteClicks++; // Increases the counter by 1 every time she clicks it
+           const loveNote = document.getElementById('love-note');
+let loveNoteClicks = 0; // 
+
+loveNote.addEventListener('click', function(e) {
+    loveNoteClicks++; // Increases the co
     
     // check look
-    if (loveNoteClicks === 11) {
-        
+    if (loveNoteClicks === 10) {
+        // Show the secret messag
         alert("testing the code id=prashantishere"); 
         
         // Reset the counter
